@@ -2,20 +2,7 @@ const Apify = require('apify');
 const _ = require('underscore');
 const URLS= require('./urls.json'); 
 const fs = require('fs');
-
-function isSocialEmpty(obj) {
-    return Object.keys(obj).every(elem => obj[elem].length === 0)
-}
-
-isSubset = (superObj, subObj) => {
-    return Object.keys(subObj).every(ele => {
-        if (subObj[ele].length > 0 && superObj[ele].length == 0) {
-            return false
-        }
-
-       return subObj[ele].every((contact) => superObj[ele].includes(contact))
-    })
-}
+const { isContentRelevant, isObjectUnique } = require('./utils');
 
 const dir = 'apify_storage'
 try{
@@ -52,6 +39,7 @@ Apify.main(async () => {
 
         const urlDecomp = new URL(request.url)
         const pseudoUrl = urlDecomp.protocol + '//' + urlDecomp.hostname + '/[.*]'
+        const pseudoUrl2 = page.url() + '[.*]'
 
         await page.waitForSelector('body', {
             timeout: WAIT_FOR_BODY_SECS * 1000,
@@ -63,7 +51,8 @@ Apify.main(async () => {
             await Apify.utils.enqueueLinks({
                 page,
                 requestQueue,
-                pseudoUrls: [pseudoUrl]
+                limit: 15,
+                pseudoUrls: [pseudoUrl, pseudoUrl2]
             });
         }
         
@@ -82,10 +71,9 @@ Apify.main(async () => {
 
         const socialHandles = Apify.utils.social.parseHandlesFromHtml(html)
 
-        console.log(`IS EMPTY: ${isSocialEmpty(socialHandles)}`)
-        console.log(`JE SUBSET: ${!uniqueCache.every(elem => !isSubset(elem, socialHandles))}`)
+        console.log(`IS RELEVANT: ${isContentRelevant(socialHandles)}`)
 
-        if(!isSocialEmpty(socialHandles) && uniqueCache.every(elem => !isSubset(elem, socialHandles))){
+        if(isContentRelevant(socialHandles) && isObjectUnique(socialHandles, uniqueCache)){
             console.log("PUSHING")
             uniqueCache.push(socialHandles)
             uniqueUrls[urlDecomp.hostname].push(page.url())
