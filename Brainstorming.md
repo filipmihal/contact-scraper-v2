@@ -17,10 +17,12 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
     - budeme uchovávať iba relatívne vzdialenosti všetkých dvojíc
     - pomocou puppeteera získame info o lokácií elementu
     - jeden contact unit sa môže vyskytovať na viacerých miestach ()
+    - Pomocou puppeteeru a prístupom do DOMu
 - contact unit type
 - počet unikátnych prvkov v danom contact unit type.
 - HTML kontext
 - semantický kontext
+
 
 ### Krok č. 3
 - clustering
