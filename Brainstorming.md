@@ -9,7 +9,7 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
 
 ## Kroky algoritmu
 1. Regexom nájdeme všetky contact units
-2. získame vstupné parametre
+2. získame vstupné parametre (lokácia na stránke, contact unit type, HTML kontext)
 3. použijeme vstupné parametre na vytvorenie contact entities
 
 ### Krok č. 2
