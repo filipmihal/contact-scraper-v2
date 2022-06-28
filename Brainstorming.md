@@ -16,7 +16,8 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
 - lokácia kontaktu na vyrenderovanej stránke
     - budeme uchovávať iba relatívne vzdialenosti všetkých dvojíc
     - pomocou puppeteera získame info o lokácií elementu
-    - jeden contact unit sa môže vyskytovať na viacerých miestach ()
+    - jeden contact unit sa môže vyskytovať na viacerých miestach
+        - V takom prípade vrátime iba minimálnu vzdialenosť od daného unitu k ostatgným unitom.
     - Pomocou puppeteeru a prístupom do DOMu
 - contact unit type
 - počet unikátnych prvkov v danom contact unit type.
