@@ -105,3 +105,5 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
 2. urob zoznam unikatnych contact units
 3. podla zoznamu v 2. zisti ci sa jedna o unikatny a pridaj ho medzi vsetky subsety
 4. nezabudaj na eliminaciu kontroly sameho seba
+
+>  Problem ktory nastal v aktualnej implementacii je, ze ju nedokazeme skalovat. Niektore objekty chceme grupovat, pretoze obsahuju odlisny typ kontaktov. Preto potrebujeme stromovu strukturu celej stranky...

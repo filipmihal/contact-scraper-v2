@@ -164,12 +164,15 @@ Apify.main(async () => {
             if(subsets.length > 0){
                 uniqueContactSubsetInheritance(contact, subsets, duplicityMap)
             }
+            else{
+                finalContacts.push(contact)
+            }
         }
         const duration = performance.now() - start
         console.log(divContents.length)
         console.log(duration)
         DURATIONS.push(duration)
-
+        console.log(finalContacts)
 
 
         console.log('finish')
