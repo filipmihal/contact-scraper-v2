@@ -87,7 +87,7 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
 4. použi niečo pri konfliktoch
 5. inak sa snaž čo najviac špecializovať
 
-### Smart ultimate
+### Ultimate greedy
 1. je to niekoho superset?
 2. Ak ano, skontroluj ci obsahuje nejake unikatne kontakty, ktore sa nikde inde nevyskytuju.
 3. ak neobsahuje ziadne unikatne kontakty, vymaz ho
