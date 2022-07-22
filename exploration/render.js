@@ -9,7 +9,7 @@ const WAIT_FOR_BODY_SECS = 200
 const DURATIONS = []
 let totalFrames = 0
 let LONELYCONTACT = 0
-// const URLS= [{url: "https://raptny.com/"}, {url: 'https://haywoodhunt.ca/'}]  
+// const URLS= [{url: "https://baysideoc.com/contact-us/"}]  
 function arrayUnion(arr1, arr2){
     return [...new Set([...arr1, ...arr2])]
 }
@@ -85,7 +85,13 @@ function uniqueContactSubsetInheritance(parent, heirs, duplicityMap){
             parent[key].forEach(contactUnit => {
                 const unitCount = duplicityMap.get(contactUnit)
                 if(unitCount == 1){
-                    LONELYCONTACT += 1
+                    if(heirs.length === 1){
+                        heirs[0][key].push(contactUnit);
+                    }
+                    if(heirs.length > 1){
+                        console.error("LONELY CONTACT: " + contactUnit)
+                        LONELYCONTACT += 1
+                    }
                     // heirs.forEach(heir => heir[key].push(contactUnit))
                 }
                 else if(unitCount > 1){
@@ -98,6 +104,7 @@ function uniqueContactSubsetInheritance(parent, heirs, duplicityMap){
             
         }
     }
+    
 }
 
 
@@ -154,8 +161,7 @@ Apify.main(async () => {
             }
         }
 
-        
-        
+  
         const duplicityMap = buildDuplicityMap(uniqueContacts)
         
         // eliminate supersets
@@ -168,15 +174,12 @@ Apify.main(async () => {
                 finalContacts.push(contact)
             }
         }
+
+
         const duration = performance.now() - start
-        console.log(divContents.length)
-        console.log(duration)
         DURATIONS.push(duration)
-        console.log(finalContacts)
-
-
-        console.log('finish')
     };
+
     // Create a PuppeteerCrawler
     const crawler = new Apify.PuppeteerCrawler({
         requestQueue,
@@ -185,7 +188,6 @@ Apify.main(async () => {
     // Run the crawler
     await crawler.run()
 
-    console.log(LONELYCONTACT)
     DURATIONS.sort(function(a, b){return a - b})
     console.log(DURATIONS[ Math.floor(DURATIONS.length / 2)])
 });

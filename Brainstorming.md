@@ -87,11 +87,12 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
 4. použi niečo pri konfliktoch
 5. inak sa snaž čo najviac špecializovať
 
-### Ultimate greedy
-1. je to niekoho superset?
-2. Ak ano, skontroluj ci obsahuje nejake unikatne kontakty, ktore sa nikde inde nevyskytuju.
-3. ak neobsahuje ziadne unikatne kontakty, vymaz ho
-4. ak ano, pridaj kontakt co najviac podobnemu subsetu 
+## Ultimate greedy algorithm
+1. pre každý div nájdi všetky kontakty. Potom sa každého opýtaj či je to niekoho superset.
+2. Ak áno, skontroluj či obsahuje nejaké unikátne kontakty, ktoré sa nikde inde nevyskytujú.
+3. ak neobsahuje žiadne unikátne kontakty, vymaž ho
+4. ak áno, pridaj kontakt čo najviac podobnému subsetu 
+5. Zostavajúce objekty reprezentujú finálne dáta
 
 4. mám viac možností... Buď to pridám iba jednému objektu... no je ťažké rozhodnúť ktorému. Preto podľa DIV pravidiel by som mal daný kontakt pridať každému podobjektu.
 
@@ -99,6 +100,8 @@ contact entity = kontaktový celok. Zoskupenie contact units, ktoré patria jedn
 
 -  urob analyzu bodu cislo 4. Je to vobec potrebne riesit?
 - samotny output moze byt tricky
+
+- Výsledky dát ukazujú, že bod 4 sa vyskytuje celkom často.
 
 ### Potrebné metódy pre Smart Ultimate
 1. daj zoznam subsetov
