@@ -31,20 +31,25 @@ function filterPhoneNumbers(phoneNumbers, uncertainPhoneNumbers){
         numbersMap.set(stdNumber, newNumber)
     })
 
+    const newPhoneNumbers = Array.from(numbersMap.values())
+
     const newUncertain = []
     uncertainPhoneNumbers.forEach((uncertainNumber) => {
-        if(!numbersMap.get(standardizePhoneNumber(uncertainNumber))){
+        const standardUncertain = standardizePhoneNumber(uncertainNumber)
+
+        if(!numbersMap.get(standardUncertain)){
             newUncertain.push(uncertainNumber)
+            numbersMap.set(standardUncertain, uncertainNumber)
         }
     })
 
     return {
-        uncertainPhoneNumbers: newUncertain, phoneNumbers: Array.from(numbersMap.values()) 
+        uncertainPhoneNumbers: newUncertain, phoneNumbers: newPhoneNumbers
     }
 }
 
 function parseHandlesFromHtml(html, data = null) {
-    const parsedHandles = Apify.utils.parseHandlesFromHtml(html, data)
+    const parsedHandles = Apify.utils.social.parseHandlesFromHtml(html, data)
     parsedHandles.emails = filterEmails(parsedHandles.emails)
 
     const newNumbers = filterPhoneNumbers(parsedHandles.phones, parsedHandles.phonesUncertain)    
@@ -53,3 +58,11 @@ function parseHandlesFromHtml(html, data = null) {
 
     return parsedHandles
 }
+
+
+
+//     emails: ["fifo.mihal@gmail.com", "Fifomihal@gmail.com", "unique@wwe.gmail.com"],
+//     phones: ["(415)-789-7802", "+1(415)-789-7804"],
+//     phonesUncertain: ["4157897802", "987654321"]
+
+// console.log(parseHandlesFromHtml(testCase1))
