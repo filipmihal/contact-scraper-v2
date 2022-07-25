@@ -1,8 +1,12 @@
 const Apify = require('apify');
+const {parseHandlesFromHtml} = require('./standardizedSocialHandles');
 const _ = require('underscore');
 const fs = require('fs');
 const URLS = require('./input_urls.json'); 
+// const URLS = require('./test_urls.json'); 
 
+// TODO: do standardization for each contact on a page
+// group single entities
 
 
 const WAIT_FOR_BODY_SECS = 200
@@ -33,6 +37,17 @@ function arrayIntersections(arr1, arr2){
 }
 function isSocialEmpty(obj) {
     return Object.keys(obj).every(elem => obj[elem].length === 0)
+}
+
+function getContactObjectLength(obj){
+    let length = 0;
+    for (const key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) {
+            length += obj[key].length
+        }
+    }
+
+    return length
 }
 
 function jaccardIndex (obj1, obj2){
@@ -78,8 +93,23 @@ function buildDuplicityMap(objectList){
     return duplicityMap
 }
 
+function isContactObjectEdgeCase(contactObject){
+    // it contains only uncertain phones
+    for (const key in contactObject) {
+        if (Object.hasOwnProperty.call(contactObject, key)) {
+            if(key === 'phonesUncertain')
+                continue
+            else if(contactObject[key].length !== 0)
+                return false
+        }
+    }
+
+    return true
+}
+
 
 function uniqueContactSubsetInheritance(parent, heirs, duplicityMap){
+    console.log(parent)
     for (const key in parent) {
         if (Object.hasOwnProperty.call(parent, key)) {
             parent[key].forEach(contactUnit => {
@@ -136,8 +166,6 @@ Apify.main(async () => {
 
     const handlePageFunction = async ({ request, page }) => {
 
-        console.log(Array.from((await page.$$("a")))[0])
-
         await page.waitForSelector('body', {
             timeout: WAIT_FOR_BODY_SECS * 1000,
         });
@@ -146,6 +174,7 @@ Apify.main(async () => {
         console.log(page.url())
         const pageFrame = page.mainFrame()
         const htmlMain = await pageFrame.$("html")
+        // console.log(await page.content())
       
         const start = performance.now();
         const divContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('div'), element => element.innerHTML))
@@ -155,17 +184,25 @@ Apify.main(async () => {
         // parse social handles for every div
         // we filter non-empty and unique objects
         for (const section of divContents) {
-            const socialHandles = Apify.utils.social.parseHandlesFromHtml(section)
-            if(!isSocialEmpty(socialHandles) && isObjectUnique(socialHandles, uniqueContacts)){
+            const socialHandles = parseHandlesFromHtml(section)
+            if(!isSocialEmpty(socialHandles) && !isContactObjectEdgeCase(socialHandles) && isObjectUnique(socialHandles, uniqueContacts)){
                 uniqueContacts.push(socialHandles)
             }
         }
 
-  
+        
+        console.log(uniqueContacts)
+        
         const duplicityMap = buildDuplicityMap(uniqueContacts)
         
         // eliminate supersets
-        for (const contact of uniqueContacts) {
+        while(uniqueContacts.length > 0){
+            
+            // array needs to be sorted in order to make subset logic work
+            // sort descending according to number of contacts an object contains
+            uniqueContacts.sort((o1, o2) => getContactObjectLength(o2)-getContactObjectLength(o1))
+            const contact = uniqueContacts[0]
+            uniqueContacts.shift()
             const subsets = uniqueContacts.filter(elem => isSubset(contact, elem) && contact !== elem)
             if(subsets.length > 0){
                 uniqueContactSubsetInheritance(contact, subsets, duplicityMap)
@@ -174,7 +211,6 @@ Apify.main(async () => {
                 finalContacts.push(contact)
             }
         }
-
 
         const duration = performance.now() - start
         DURATIONS.push(duration)

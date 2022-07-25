@@ -26,7 +26,7 @@ function filterPhoneNumbers(phoneNumbers, uncertainPhoneNumbers){
     const numbersMap = new Map()
     phoneNumbers.forEach((number) => {
         const stdNumber = standardizePhoneNumber(number)
-        const currentNumber = numbersMap.get(stdNumber)
+        const currentNumber = numbersMap.get(stdNumber) ?? ''
         const newNumber = number.length > currentNumber.length ? number : currentNumber
         numbersMap.set(stdNumber, newNumber)
     })
@@ -59,10 +59,8 @@ function parseHandlesFromHtml(html, data = null) {
     return parsedHandles
 }
 
-
-
 //     emails: ["fifo.mihal@gmail.com", "Fifomihal@gmail.com", "unique@wwe.gmail.com"],
 //     phones: ["(415)-789-7802", "+1(415)-789-7804"],
 //     phonesUncertain: ["4157897802", "987654321"]
 
-// console.log(parseHandlesFromHtml(testCase1))
+// console.log(parseHandlesFromHtml(a))
