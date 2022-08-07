@@ -3,7 +3,7 @@ function arrayUnion<T>(arr1: Array<T>, arr2: Array<T>){
     return [...new Set([...arr1, ...arr2])]
 }
 
-const isSubset = (superObj: SocialHandles, subObj: SocialHandles) => {
+export const isSubset = (superObj: SocialHandles, subObj: SocialHandles) => {
     return Object.keys(subObj).every(ele => {
         const socialIndex = ele as keyof SocialHandles
         if (subObj[socialIndex].length > 0 && superObj[socialIndex].length == 0) {
@@ -21,13 +21,13 @@ function arrayIntersections<T>(arr1: Array<T>, arr2: Array<T>){
     return arr1.filter(value => arr2.includes(value))
 }
 
-function isSocialEmpty(obj: SocialHandles) {
+export function isSocialEmpty(obj: SocialHandles) {
     return Object.keys(obj).every(elem => {
         const socialIndex = elem as keyof SocialHandles
         return obj[socialIndex].length === 0});
 }
 
-function getContactObjectLength(obj: SocialHandles){
+export function getContactObjectLength(obj: SocialHandles){
     let length = 0;
     for (const key in obj) {
         const socialKey = key as keyof SocialHandles;
@@ -53,7 +53,7 @@ function jaccardIndex (obj1: SocialHandles, obj2: SocialHandles){
     return intersections / unionSize
 }
 
-function isObjectUnique (obj: SocialHandles, savedObjs: SocialHandles[]){
+export function isObjectUnique (obj: SocialHandles, savedObjs: SocialHandles[]){
     return savedObjs.every(elem => jaccardIndex(obj, elem) < 1)
  }
 
@@ -61,19 +61,24 @@ function areSocialsTheSame(obj1: SocialHandles, obj2: SocialHandles){
     return jaccardIndex(obj1, obj2) === 1
 }
 
-function buildDuplicityMap(objectList: SocialHandles[]){
-    const duplicityMap = new Map()
+/**
+ * Builds a map of contact units found on the website
+ * @param objectList 
+ * @returns Map<string, number> key of the map is a contact unit, value is the number of occurences 
+ */
+export function buildDuplicityMap(objectList: SocialHandles[]){
+    const duplicityMap = new Map<string, number>()
     for (const contactObject of objectList) {
         for (const key in contactObject) {
             if (Object.hasOwnProperty.call(contactObject, key)) {
                 const socialKey = key as keyof SocialHandles;
                 contactObject[socialKey].forEach(elem => {
-                    if(!duplicityMap.get(elem)){
+                    const count = duplicityMap.get(elem);
+                    if(!count){
                         duplicityMap.set(elem,1)
                     }
                     else{
-                        const num = duplicityMap.get(elem)
-                        duplicityMap.set(elem, num+1)
+                        duplicityMap.set(elem, count+1)
                     }
                 })
                 
@@ -84,7 +89,7 @@ function buildDuplicityMap(objectList: SocialHandles[]){
     return duplicityMap
 }
 
-function isContactObjectEdgeCase(contactObject: SocialHandles){
+export function isContactObjectEdgeCase(contactObject: SocialHandles){
     // it contains only uncertain phones
     for (const key in contactObject) {
         const socialKey = key as keyof SocialHandles;
@@ -100,7 +105,7 @@ function isContactObjectEdgeCase(contactObject: SocialHandles){
 }
 
 
-function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: SocialHandles[], duplicityMap: Map<string, number>){
+export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: SocialHandles[], duplicityMap: Map<string, number>){
     for (const key in parent) {
         if (Object.hasOwnProperty.call(parent, key)) {
             const socialKey = key as keyof SocialHandles;

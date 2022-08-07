@@ -1,4 +1,4 @@
-import {parseHandlesFromHtml} from '@crawlee/utils/internals/social';
+import { social } from 'crawlee';
 
 
 function standardizeEmail(email: string){
@@ -46,7 +46,7 @@ function filterPhoneNumbers(phoneNumbers: string[], uncertainPhoneNumbers: strin
 }
 
 export function parseStandardHandlesFromHtml(html:string, data = null) {
-    const parsedHandles = parseHandlesFromHtml(html, data)
+    const parsedHandles = social.parseHandlesFromHtml(html, data)
     parsedHandles.emails = filterEmails(parsedHandles.emails)
 
     const newNumbers = filterPhoneNumbers(parsedHandles.phones, parsedHandles.phonesUncertain)    
