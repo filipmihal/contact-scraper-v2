@@ -1,4 +1,5 @@
 **/node_modules
 **/apify_storage
-**/storage
+**/request_queues
+**/default/SDK*
 **/dist

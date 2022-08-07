@@ -1,4 +1,4 @@
-import { createPuppeteerRouter } from 'crawlee';
+import { createPuppeteerRouter, Dataset } from 'crawlee';
 import * as Helper from './helpers.js';
 import { DURATIONS } from './main.js';
 import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js';
@@ -6,6 +6,7 @@ import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js';
 export const router = createPuppeteerRouter();
 
 router.addDefaultHandler(async ({ page, log }) => {
+    const url = await page.url()
     const pageFrame = page.mainFrame()
     const htmlMain = await pageFrame.$("html")
 
@@ -49,8 +50,19 @@ router.addDefaultHandler(async ({ page, log }) => {
     }
     console.log(`CONTACT OBJECT FOR: ${await page.url()}`)
     console.log(finalContacts)
+
+    const result = {
+        depth: 0,
+        referrerUrl: '',
+        url,
+        domain: '',
+        contactObjects: finalContacts
+    }
+
+    Dataset.pushData(result)
     const duration = performance.now() - start
     DURATIONS.push(duration)
+
     // await enqueueLinks({
     //     globs: ['https://crawlee.dev/*'],
     //     label: 'DETAIL',
