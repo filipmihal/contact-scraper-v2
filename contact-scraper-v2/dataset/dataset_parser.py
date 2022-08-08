@@ -27,17 +27,34 @@ def row_to_social(row):
         # "name": row[2],
         'emails': text_to_list(row[3]),
         'phones': text_to_list(row[4]),
-        'address': row[5],
-        'linkedIns': row[6],
-        'facebooks': row[7],
-        'instagrams': row[8],
-        'twitters': row[9],
+        # 'address': row[5],
+        'linkedIns': text_to_list(row[6]),
+        'facebooks': text_to_list(row[7]),
+        'instagrams': text_to_list(row[8]),
+        'twitters': text_to_list(row[9]),
         # TODO: sub objects not needed yet
     }
 
 
+def get_compact_dataset(dataset):
+    """Returns a compact version of the dataset. 
+    All contact objects for a specific URL are unified into a single object"""
+    compact = {}
+    for url in dataset.keys():
+        final_obj = {}
+        for contact in dataset[url]:
+            for contact_type in contact.keys():
+                if final_obj.get(contact_type):
+                    final_obj[contact_type] = contact[contact_type] + \
+                        final_obj[contact_type]
+                else:
+                    final_obj[contact_type] = contact[contact_type]
+        compact[url] = final_obj
+    return compact
+
+
 def get_parsed_dataset():
-    """Returns the datase as a dictionary. key is a url and value is a list of contact objects"""
+    """Returns the dataset as a dictionary. key is a url and value is a list of contact objects"""
     dataset_dictionary = {}
     with open(INPUT_FILE, 'r') as read_obj:
         csv_reader = reader(read_obj)
