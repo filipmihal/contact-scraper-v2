@@ -99,5 +99,6 @@ Firstly, we decided to use pure HTML to find contact objects and not to use any 
 5. check if there is a subset of contacts in the list of DIVS for a given DIV A (currently iterated)
 6. If yes, then we can delete this DIV. If it contains any contact units that do not occur anywhere else, we will create a trash contact object for them.
 7. if no (there is no subset in the list) then this DIV represents one of the final contact objects.
+8. Resulting list is represented by leaf DIVS and one trash DIV.
 
 <!-- TODO: explain this a little bit more -->
