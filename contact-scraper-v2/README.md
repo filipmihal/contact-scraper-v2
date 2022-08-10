@@ -82,9 +82,12 @@ In order to be able to use the dataset, annotated contact units (emails, phone n
 
 Median Jaccard index of data not altered in any way was ~ 0.20
 
+We beautified the annotators' dataset by standardazing contact units and switching misplaced values.
+
 <b>Scripts</b>
 
 -   [Library that parses the dataset and computes Jaccard indeces](dataset/dataset_evaluator.py)
+-   [Beautifier](dataset/dataset_beautifier.py)
 
 ## 3. Grouping algorithm
 
