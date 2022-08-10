@@ -18,6 +18,8 @@ def is_weak_row(row):
 
 
 def text_to_list(text):
+    if text.replace(' ', '') == '':
+        return []
     return text.split(';')
 
 
