@@ -95,6 +95,64 @@ Firstly, we decided to use pure HTML to find contact objects and not to use any 
 
 ### Greedy algorithm that uses DIVS as contact object separators
 
+<b>Basic idea:</b> We use DIV elements as object identifiers and separators.
+
+
+<b>Definitions:</b>
+- Empty DIV is a DIV whose content is free of any contact info. (Our regex could not find anything)
+- Leaf DIV is a DIV that contains atleast one contact and that does not contain any other DIVs or all of its DIV children are empty DIVs.
+
+
+All contacts that are inside a single leaf DIV belong to a single contact object. If there is a contact whose position is not in a leaf DIV, then we add it to a "trash" contact object
+
+
+<b>Example:</b>
+```html
+<html>
+    <div>
+        hello@company.com
+        <div>
+        ceo@company.com
+        +420919086799
+        </div>
+        <div>
+        cto@company.com
+        <a href='https://linkedin.com/cto'>CTO</a>
+        </div>
+    </div>
+    <div>
+    https://youtube.com/company
+    </div>
+</html>
+```
+
+<b>Resulting objects:</b>
+
+```json
+[
+    {
+        // trash object
+        "emails": ["hello@company.com"]
+    },
+    {
+        "emails": ["ceo@company.com"],
+        "phones": ["+420919086799"]
+    },
+    {
+        "emails": ["cto@company.com"],  
+        "linkedins": ["https://linkedin.com/cto"] 
+    },
+    {
+        "youtubes": ["https://youtube.com/company"]
+    }
+]
+```
+
+Although, the algorithm sounds simple, the Puppeteer API does not allow us to build a simple algorithm. So we had to use small work arounds to simulate the steps mentioned above. Here is a proper description of what the algorithm does:
+
+
+
+
 1. Find all DIVS on a given website
 2. Find all contacts in a given DIV. Do that for each DIV
 3. Sort DIVS (descending) by the number of contact units they contain
