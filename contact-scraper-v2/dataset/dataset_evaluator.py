@@ -17,10 +17,10 @@ def median_jaccard_index(annotators_data, scraper_data, skip_list):
             idx = jaccard_index(
                 annotators_data[annotator_url], scraper_data[annotator_url], skip_list)
             jaccards.append(idx)
-            # if idx == 0:
-            #     print(annotators_data[annotator_url])
-            #     print(scraper_data[annotator_url])
-            #     print('----------')
+            if idx == 0:
+                print(annotators_data[annotator_url])
+                print(scraper_data[annotator_url])
+                print('----------')
 
     jaccards.sort()
 
@@ -43,9 +43,9 @@ std_annotators_dataset = standardize_dataset(compact_annotators_dataset)
 scraper_dataset = get_scraped_dataset()
 std_scraped_dataset = standardize_dataset(scraper_dataset)
 
+# print(median_jaccard_index(std_annotators_dataset,
+#       std_scraped_dataset, ['phones', 'emails']))
+# print(median_jaccard_index(std_annotators_dataset,
+#       std_scraped_dataset, ['phones']))
 print(median_jaccard_index(std_annotators_dataset,
-      std_scraped_dataset, ['phones', 'emails']))
-print(median_jaccard_index(std_annotators_dataset,
-      std_scraped_dataset, ['phones']))
-print(median_jaccard_index(std_annotators_dataset,
-      std_scraped_dataset, ['email']))
+      std_scraped_dataset, ['url']))

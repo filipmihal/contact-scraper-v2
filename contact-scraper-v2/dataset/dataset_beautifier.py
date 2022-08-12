@@ -51,7 +51,7 @@ def standardize_social_handle(handle):
             is_row_mismatched = True
         emails.append(standardize_email(email))
     new_handle['emails'] = emails
-    for phone in handle['phones']:
+    for phone in new_handle['phones']:
         if standardize_phone(phone) == '':
             continue
         phones.append(standardize_phone(phone))
@@ -77,3 +77,4 @@ def standardize_dataset(dataset):
 # print(standardize_email(' fio.ff.g@hmail.com '))
 # print(standardize_phone('+1 (98.7)-00-999'))
 # print(is_email('ahoj@jmil.com'))
+# print(standardize_phone('415.377.4115'))

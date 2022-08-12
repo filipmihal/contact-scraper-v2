@@ -14,7 +14,8 @@ def list_intersection(lst1, lst2):
 
 def is_weak_row(row):
     """For now, we do not need all the data from tha datase. So some rows can be skipped"""
-    all(elem == '' or idx in [0, 1, 2, 5, 11] for elem, idx in enumerate(row))
+    return all((elem == '' or idx in [0, 1, 2, 5, 11])
+               for idx, elem in enumerate(row))
 
 
 def text_to_list(text):
@@ -34,6 +35,7 @@ def row_to_social(row):
         'facebooks': text_to_list(row[7]),
         'instagrams': text_to_list(row[8]),
         'twitters': text_to_list(row[9]),
+        'url': row[0]
         # TODO: sub objects not needed yet
     }
 
