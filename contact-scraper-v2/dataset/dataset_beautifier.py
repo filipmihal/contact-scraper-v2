@@ -42,8 +42,13 @@ def standardize_social_handle(handle):
     phones = []
     is_row_mismatched = False
     if new_handle.get('phonesUncertain'):
-        new_handle['phones'] = [standardize_phone(elem) for elem in new_handle['phones']] + [
-            standardize_phone(elem) for elem in new_handle['phonesUncertain']]
+
+        # Adding phones uncertain decreases jaccard median
+        new_handle['phones'] = [standardize_phone(
+            elem) for elem in new_handle['phones']]
+        # new_handle['phones'] = [standardize_phone(elem) for elem in new_handle['phones']] + [
+        #     standardize_phone(elem) for elem in new_handle['phonesUncertain']]
+
     for email in handle['emails']:
         if standardize_email(email) == '':
             continue
