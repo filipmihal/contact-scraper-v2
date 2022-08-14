@@ -42,8 +42,8 @@ def standardize_social_handle(handle):
     phones = []
     is_row_mismatched = False
     if new_handle.get('phonesUncertain'):
-        new_handle['phones'] = new_handle['phones'] + \
-            new_handle['phonesUncertain']
+        new_handle['phones'] = [standardize_phone(elem) for elem in new_handle['phones']] + [
+            standardize_phone(elem) for elem in new_handle['phonesUncertain']]
     for email in handle['emails']:
         if standardize_email(email) == '':
             continue
@@ -58,10 +58,14 @@ def standardize_social_handle(handle):
     new_handle['phones'] = phones
 
     if is_row_mismatched:
-        # new_handle['phones'], new_handle['emails'] = new_handle['emails'], new_handle['phones']
-        new_handle['phones'] = emails
-        new_handle['emails'] = phones
-        print(new_handle['emails'])
+        new_handle['phones'] = [standardize_phone(
+            elem) for elem in handle['emails']]
+        new_handle['emails'] = [standardize_email(
+            elem) for elem in handle['phones']]
+
+    new_handle['phones'] = [*set(new_handle['phones'])]
+    # new_handle['phones'], new_handle['emails'] = new_handle['emails'], new_handle['phones']
+    # print(handle['url'])
     return new_handle
 
 

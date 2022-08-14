@@ -1,10 +1,32 @@
 from csv import reader
+from Levenshtein import distance
+
 # SCRIPT INPUT PARAMS
 INPUT_FILE = 'contact-scraper-v2/dataset/dataset.csv'
 
 
+def levenstein_intersection(list1, list2):
+    result = []
+    for value in list1:
+        for value2 in list2:
+            if distance(value, value2) <= 2:
+                result.append(value)
+    return result
+
+
 def list_union(list1, list2):
     return list1 + list2
+
+
+def levenstein_union(list1, list2):
+    result = []
+    for elem in list1:
+        for elem2 in list2:
+            if distance(elem, elem2) > 2:
+                result.append(elem)
+    result += list2
+
+    return result
 
 
 def list_intersection(lst1, lst2):
@@ -35,7 +57,8 @@ def row_to_social(row):
         'facebooks': text_to_list(row[7]),
         'instagrams': text_to_list(row[8]),
         'twitters': text_to_list(row[9]),
-        'url': row[0]
+        'youtubes': text_to_list(row[10]),
+        # 'url': row[0]
         # TODO: sub objects not needed yet
     }
 
@@ -70,3 +93,7 @@ def get_parsed_dataset():
                     dataset_dictionary[row[0]].append(row_to_social(row))
 
     return dataset_dictionary
+
+
+# print(levenstein_intersection(
+#     ['hello', 'facebook', 'inswrq'], ['helko', 'facebok', 'instag']))
