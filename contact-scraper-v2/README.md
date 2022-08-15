@@ -84,6 +84,10 @@ Median Jaccard index of data not altered in any way was ~ 0.20
 
 We beautified the annotators' dataset by standardazing contact units and switching misplaced values.
 
+Unfortunately, this did not raise the median that much. There were multiple factors that influenced the jaccard index. Hence, we decided to use Levenstein distance <=2.
+
+After the cleanup and levenstain implementation, our final median index was ~0.5
+
 <b>Scripts</b>
 
 -   [Library that parses the dataset and computes Jaccard indeces](dataset/dataset_evaluator.py)
@@ -97,32 +101,26 @@ Firstly, we decided to use pure HTML to find contact objects and not to use any 
 
 <b>Basic idea:</b> We use DIV elements as object identifiers and separators.
 
-
 <b>Definitions:</b>
-- Empty DIV is a DIV whose content is free of any contact info. (Our regex could not find anything)
-- Leaf DIV is a DIV that contains atleast one contact and that does not contain any other DIVs or all of its DIV children are empty DIVs.
 
+-   Empty DIV is a DIV whose content is free of any contact info. (Our regex could not find anything)
+-   Leaf DIV is a DIV that contains atleast one contact and that does not contain any other DIVs or all of its DIV children are empty DIVs.
 
 All contacts that are inside a single leaf DIV belong to a single contact object. If there is a contact whose position is not in a leaf DIV, then we add it to a "trash" contact object
 
-
 <b>Example:</b>
+
 ```html
 <html>
     <div>
         hello@company.com
+        <div>ceo@company.com +420919086799</div>
         <div>
-        ceo@company.com
-        +420919086799
-        </div>
-        <div>
-        cto@company.com
-        <a href='https://linkedin.com/cto'>CTO</a>
+            cto@company.com
+            <a href="https://linkedin.com/cto">CTO</a>
         </div>
     </div>
-    <div>
-    https://youtube.com/company
-    </div>
+    <div>https://youtube.com/company</div>
 </html>
 ```
 
@@ -139,8 +137,8 @@ All contacts that are inside a single leaf DIV belong to a single contact object
         "phones": ["+420919086799"]
     },
     {
-        "emails": ["cto@company.com"],  
-        "linkedins": ["https://linkedin.com/cto"] 
+        "emails": ["cto@company.com"],
+        "linkedins": ["https://linkedin.com/cto"]
     },
     {
         "youtubes": ["https://youtube.com/company"]
@@ -149,9 +147,6 @@ All contacts that are inside a single leaf DIV belong to a single contact object
 ```
 
 Although, the algorithm sounds simple, the Puppeteer API does not allow us to build a simple algorithm. So we had to use small work arounds to simulate the steps mentioned above. Here is a proper description of what the algorithm does:
-
-
-
 
 1. Find all DIVS on a given website
 2. Find all contacts in a given DIV. Do that for each DIV
@@ -162,4 +157,78 @@ Although, the algorithm sounds simple, the Puppeteer API does not allow us to bu
 7. if no (there is no subset in the list) then this DIV represents one of the final contact objects.
 8. Resulting list is represented by leaf DIVS and one trash DIV.
 
+Perfect real-world example: https://missionlocal.org/about-3/ (algorithm achieved )
+
 <!-- TODO: explain this a little bit more -->
+
+## 4. Evaluating the algorithm
+
+We need a way to evaluate the correctness of our algorithm.
+We deal with multiple objects that contain multiple properties.
+There are several discrepancies between annotated dataset and the actual scraped data, so we need to take that into an account.
+Most important parameter is the differnce between the number of contact objects of scraped and annotated website. With jaccard similarity just around 0.5 it seems futile to compare the actual contents of contact objects.
+
+Once we achieve relatively good "object number" similarity, then we can care about the actual content of those objects.
+
+So our first metric was the difference between the number of contact objects.
+We computed median and average.
+
+<b>Results for 20 URLs dataset (Many contact objects per website [6]):</b>
+
+<table>
+  <tr>
+    <th>Algorithm</th>
+    <th>average difference in the number of objects</th>
+    <th>median difference</th>
+    <th>weighted difference (determines strength of grouping)</th>
+
+  </tr>
+  <tr>
+    <td>DIVS</td>
+    <td>2</td>
+    <td>~4.1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>DIVS, TR, TD</td>
+    <td>2</td>
+    <td>~3.4</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>DIVS, TR, TD and weak P, LI tags</td>
+    <td>1</td>
+    <td>~2.76</td>
+    <td>0 (AVG: 1.6)</td>
+  </tr>
+   <tr>
+    <td>DIVS, TR, TD and weak P, LI tags + Uncertain objects</td>
+    <td>1</td>
+    <td>~2.51</td>
+    <td>0 (AVG: 1.14)</td>
+  </tr>
+</table>
+
+<b>100 URLs randomly selected</b>
+
+<table>
+  <tr>
+    <th>Algorithm</th>
+    <th>average difference</th>
+    <th>median difference</th>
+    <th>weighted difference (determines strength of grouping)</th>
+
+  </tr>
+  <tr>
+    <td>DIVS, TR, TD and weak P, LI tags</td>
+    <td>1</td>
+    <td>~1.79</td>
+    <td>-1 (AVG: -1.4)</td>
+  </tr>
+   <tr>
+    <td>DIVS, TR, TD and weak P, LI tags + uncertain objects</td>
+    <td>1</td>
+    <td>~2.04</td>
+    <td>-1 (AVG: -1.72)</td>
+  </tr>
+</table>
