@@ -159,6 +159,15 @@ Although, the algorithm sounds simple, the Puppeteer API does not allow us to bu
 
 Perfect real-world example: https://missionlocal.org/about-3/ (algorithm achieved )
 
+### Greedy algorithm upgrade
+
+After running scoring function on our greedy algorithm, we noticed several heuristics that might help in improving the resulting contact objects:
+
+-   Add new separator tags such as TR, TD, UL, ADDRESS
+-   Add weak TAGS (If they contain only single contact unit we will neglect them) P, LI
+-   Do not neglect phonesUncertain
+-   Group objects into one if they don't share same properties
+
 <!-- TODO: explain this a little bit more -->
 
 ## 4. Evaluating the algorithm
@@ -172,6 +181,8 @@ Once we achieve relatively good "object number" similarity, then we can care abo
 
 So our first metric was the difference between the number of contact objects.
 We computed median and average.
+
+In many cases if the number of contact objects mathes, then it is highly probable that the contents of those objects will match as well.
 
 <b>Results for 20 URLs dataset (Many contact objects per website [6]):</b>
 
@@ -238,3 +249,12 @@ We computed median and average.
     <td>0 (AVG: -1.21)</td>
   </tr>
 </table>
+
+## 5. Summary
+
+First part of the project was to collect a relative good dataset and create a simple algorithm that does not require AI. We achieved moderate results.
+
+#### Ideas
+
+-   Game changer would be to take advantage of the rendered page and compute objects based on the positions of contact units on a given page
+-   Use the tree structure of an HTML page as a metric. (requires better API)
