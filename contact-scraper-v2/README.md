@@ -231,4 +231,10 @@ We computed median and average.
     <td>~2.04</td>
     <td>-1 (AVG: -1.72)</td>
   </tr>
+  <tr>
+    <td>DIVS, TR, TD and weak P, LI tags + uncertain objects + unit grouping</td>
+    <td>0</td>
+    <td>~1.53</td>
+    <td>0 (AVG: -1.21)</td>
+  </tr>
 </table>
