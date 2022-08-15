@@ -27,6 +27,22 @@ export function isSocialEmpty(obj: SocialHandles) {
         return obj[socialIndex].length === 0});
 }
 
+export function getNumberOfContactUnits(obj: SocialHandles){
+    return Object.keys(obj).map(elem => {
+        const socialIndex = elem as keyof SocialHandles
+        return obj[socialIndex].length}).reduce((partailSum, len) => partailSum+len, 0)
+}
+
+export function havePropertyInCommon(obj1: SocialHandles, obj2: SocialHandles){
+    for( const elem of Object.keys(obj1)) {
+        const socialIndex = elem as keyof SocialHandles
+        if(obj1[socialIndex].length > 0 && obj2[socialIndex].length > 0){
+            return true
+        }
+    }
+    return false
+}
+
 export function getContactObjectLength(obj: SocialHandles){
     let length = 0;
     for (const key in obj) {
@@ -94,9 +110,9 @@ export function isContactObjectEdgeCase(contactObject: SocialHandles){
     for (const key in contactObject) {
         const socialKey = key as keyof SocialHandles;
         if (Object.hasOwnProperty.call(contactObject, key)) {
-            if(key === 'phonesUncertain')
-                continue
-            else if(contactObject[socialKey].length !== 0)
+            // if(key === 'phonesUncertain')
+            //     continue
+           if(contactObject[socialKey].length !== 0)
                 return false
         }
     }
@@ -135,3 +151,4 @@ export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: Soc
     }
     
 }
+

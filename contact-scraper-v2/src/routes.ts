@@ -5,7 +5,7 @@ import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js';
 
 export const router = createPuppeteerRouter();
 
-router.addDefaultHandler(async ({ page, log }) => {
+router.addDefaultHandler(async ({ page }) => {
     const url = await page.url()
     const pageFrame = page.mainFrame()
     const htmlMain = await pageFrame.$("html")
@@ -17,13 +17,22 @@ router.addDefaultHandler(async ({ page, log }) => {
     const start = performance.now();
 
     // Find every div on the webiste
-    const divContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('div'), element => element.innerHTML))
+    const potentialContactContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('div, tr, td, ul, address'), element => element.innerHTML))
+    const potentialWeakContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('p, li'), element => element.innerHTML))
     const uniqueContacts = []
-    const finalContacts = []
+    let finalContacts = []
+
+    for ( const weakElem of potentialWeakContents ) {
+        const socialHandles = parseStandardHandlesFromHtml(weakElem)
+        if(Helper.getNumberOfContactUnits(socialHandles) > 1){
+            potentialContactContents.push(weakElem)
+        }
+
+    }
 
     // parse social handles for every div
     // we filter non-empty and unique objects
-    for (const section of divContents) {
+    for (const section of potentialContactContents) {
         const socialHandles = parseStandardHandlesFromHtml(section)
         if(!Helper.isSocialEmpty(socialHandles) && !Helper.isContactObjectEdgeCase(socialHandles) && Helper.isObjectUnique(socialHandles, uniqueContacts)){
             uniqueContacts.push(socialHandles)
@@ -48,8 +57,24 @@ router.addDefaultHandler(async ({ page, log }) => {
             finalContacts.push(contact)
         }
     }
-    console.log(`CONTACT OBJECT FOR: ${await page.url()}`)
-    console.log(finalContacts)
+
+    // TODO resolve bug with subsets
+    // TODO combine relatively SIMILAR OBJECTS
+
+    // combine into one if possible
+    let canFormUnit = true;
+    for (let idx = 0; idx < finalContacts.length; idx++) {
+        for (let idx2 = idx+1; idx2 < finalContacts.length; idx2++) {
+            if(Helper.havePropertyInCommon(finalContacts[idx], finalContacts[idx2])){
+                canFormUnit = false
+            }
+        }
+    }
+
+   if(canFormUnit){
+        const fullContent  = await page.content()
+        finalContacts = [parseStandardHandlesFromHtml(fullContent)]
+   }
 
     const result = {
         depth: 0,
