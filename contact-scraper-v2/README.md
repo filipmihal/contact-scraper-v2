@@ -250,13 +250,13 @@ In many cases if the number of contact objects mathes, then it is highly probabl
   </tr>
 </table>
 
-## 5. Summary
-
-First part of the project was to collect a relative good dataset and create a simple algorithm that does not require AI. We achieved moderate results.
-
 <b>Scripts</b>
 
 -   [Python script that computes correctness of the algorithm](./dataset/score_calculator.py)
+
+## 5. Summary
+
+First part of the project was to collect a relative good dataset and create a simple algorithm that does not require AI. We achieved moderate results.
 
 #### Ideas
 
