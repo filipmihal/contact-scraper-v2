@@ -1,9 +1,10 @@
-import { createPuppeteerRouter, Dataset } from 'crawlee';
-import * as Helper from './helpers.js';
-import { DURATIONS } from './main.js';
-import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js';
+import { createPuppeteerRouter, Dataset } from 'crawlee'
+import * as Helper from './helpers.js'
+import { DURATIONS } from './main.js'
+import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js'
 
-export const router = createPuppeteerRouter();
+export const router = createPuppeteerRouter()
+const OBJECT_SEPARATORS = 'div, tr, td, ul, address'
 
 router.addDefaultHandler(async ({ page }) => {
     const url = await page.url()
@@ -14,10 +15,9 @@ router.addDefaultHandler(async ({ page }) => {
         return
     }
   
-    const start = performance.now();
+    const start = performance.now()
 
-    // Find every div on the webiste
-    const potentialContactContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('div, tr, td, ul, address'), element => element.innerHTML))
+    const potentialContactContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll(OBJECT_SEPARATORS), element => element.innerHTML))
     const potentialWeakContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('p, li'), element => element.innerHTML))
     const uniqueContacts = []
     let finalContacts = []
@@ -30,7 +30,7 @@ router.addDefaultHandler(async ({ page }) => {
 
     }
 
-    // parse social handles for every div
+    // parse social handles for every contact object separator
     // we filter non-empty and unique objects
     for (const section of potentialContactContents) {
         const socialHandles = parseStandardHandlesFromHtml(section)
@@ -45,7 +45,7 @@ router.addDefaultHandler(async ({ page }) => {
     while(uniqueContacts.length > 0){
         
         // array needs to be sorted in order to make subset logic work
-        // sort descending according to number of contacts an object contains
+        // sort descending according to the number of contacts a given object contains
         uniqueContacts.sort((o1, o2) => Helper.getContactObjectLength(o2)-Helper.getContactObjectLength(o1))
         const contact = uniqueContacts[0]
         uniqueContacts.shift()
@@ -61,7 +61,7 @@ router.addDefaultHandler(async ({ page }) => {
     // TODO resolve bug with subsets
     // TODO combine relatively SIMILAR OBJECTS
 
-    // combine into one if possible
+    // combine into single contact object if possible
     let canFormUnit = true;
     for (let idx = 0; idx < finalContacts.length; idx++) {
         for (let idx2 = idx+1; idx2 < finalContacts.length; idx2++) {
@@ -87,9 +87,4 @@ router.addDefaultHandler(async ({ page }) => {
     Dataset.pushData(result)
     const duration = performance.now() - start
     DURATIONS.push(duration)
-
-    // await enqueueLinks({
-    //     globs: ['https://crawlee.dev/*'],
-    //     label: 'DETAIL',
-    // });
 });
