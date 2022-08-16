@@ -77,8 +77,6 @@ def standardize_social_handle(handle):
             elem) for elem in handle['phones']]
 
     new_handle['phones'] = [*set(new_handle['phones'])]
-    # new_handle['phones'], new_handle['emails'] = new_handle['emails'], new_handle['phones']
-    # print(handle['url'])
     return new_handle
 
 
@@ -89,9 +87,3 @@ def standardize_dataset(dataset):
         new_dataset[key] = std_row
 
     return new_dataset
-
-
-# print(standardize_email(' fio.ff.g@hmail.com '))
-# print(standardize_phone('+1 (98.7)-00-999'))
-# print(is_email('ahoj@jmil.com'))
-# print(standardize_phone('415.377.4115'))
