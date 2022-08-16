@@ -4,7 +4,6 @@ import { DURATIONS } from './main.js'
 import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js'
 
 export const router = createPuppeteerRouter()
-const OBJECT_SEPARATORS = 'div, tr, td, ul, address'
 
 router.addDefaultHandler(async ({ page }) => {
     const url = await page.url()
@@ -17,7 +16,7 @@ router.addDefaultHandler(async ({ page }) => {
   
     const start = performance.now()
 
-    const potentialContactContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll(OBJECT_SEPARATORS), element => element.innerHTML))
+    const potentialContactContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('div, tr, td, ul, address'), element => element.innerHTML))
     const potentialWeakContents = await htmlMain.evaluate(() => Array.from(document.querySelectorAll('p, li'), element => element.innerHTML))
     const uniqueContacts = []
     let finalContacts = []
@@ -51,15 +50,17 @@ router.addDefaultHandler(async ({ page }) => {
         uniqueContacts.shift()
         const subsets = uniqueContacts.filter(elem => Helper.isSubset(contact, elem) && contact !== elem)
         if(subsets.length > 0){
-            Helper.uniqueContactSubsetInheritance(contact, subsets, duplicityMap)
+            const potentialObj = Helper.uniqueContactSubsetInheritance(contact, subsets, duplicityMap)
+            // if(potentialObj){
+            //     finalContacts.push(potentialObj)
+            // }
         }
         else{
             finalContacts.push(contact)
         }
     }
 
-    // TODO resolve bug with subsets
-    // TODO combine relatively SIMILAR OBJECTS
+    finalContacts = Helper.groupSimilarObjects(finalContacts)
 
     // combine into single contact object if possible
     let canFormUnit = true;

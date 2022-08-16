@@ -248,6 +248,12 @@ In many cases if the number of contact objects mathes, then it is highly probabl
     <td>~1.53</td>
     <td>0 (AVG: -1.21)</td>
   </tr>
+  <tr>
+    <td>DIVS, TR, TD and weak P, LI tags + uncertain objects + unit grouping + grouping similar objects</td>
+    <td>0</td>
+    <td>~1.27</td>
+    <td>0 (AVG: -0.95)</td>
+  </tr>
 </table>
 
 <b>Scripts</b>
