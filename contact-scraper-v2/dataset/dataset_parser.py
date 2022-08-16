@@ -93,7 +93,3 @@ def get_parsed_dataset():
                     dataset_dictionary[row[0]].append(row_to_social(row))
 
     return dataset_dictionary
-
-
-# print(levenstein_intersection(
-#     ['hello', 'facebook', 'inswrq'], ['helko', 'facebok', 'instag']))

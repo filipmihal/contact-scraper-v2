@@ -37,15 +37,23 @@ def is_email(email):
 
 
 def standardize_social_handle(handle):
+    '''
+    Standardization includes:
+    - email: lowercase string, remove redundant spaces and dots
+    - phones: remove everything except numbers
+    - if emails and phones are misplaced, we swap them
+    '''
     new_handle = copy.deepcopy(handle)
     emails = []
     phones = []
     is_row_mismatched = False
     if new_handle.get('phonesUncertain'):
 
-        # Adding phones uncertain decreases jaccard median
         new_handle['phones'] = [standardize_phone(
             elem) for elem in new_handle['phones']]
+
+        # OPTIONAL PIECE OF CODE
+        # Adding phones uncertain decreases jaccard median
         # new_handle['phones'] = [standardize_phone(elem) for elem in new_handle['phones']] + [
         #     standardize_phone(elem) for elem in new_handle['phonesUncertain']]
 

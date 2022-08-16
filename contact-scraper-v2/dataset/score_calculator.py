@@ -1,4 +1,3 @@
-
 from posixpath import split
 import random
 import os
@@ -19,9 +18,12 @@ CLEAN_DATASET = get_parsed_dataset()
 
 
 def get_correct_objects_for_url(url):
+    '''
+    Returns standardized social handles for a specific URL
+    Uses Global object CLEAN_DATASET
+    '''
     result = []
     if CLEAN_DATASET.get(url):
-        # print(len(CLEAN_DATASET.get(url)))
         for obj in CLEAN_DATASET.get(url):
             std_social = standardize_social_handle(obj)
             result.append(std_social)
@@ -32,16 +34,11 @@ def get_correct_objects_for_url(url):
 LENGTH_DIFFERENCES = []
 GROUPINGS = []
 
-
-# def create_jaccard_dictionary():
-
 for algorithm_dataset_path in dir_list:
     json_raw = open(path+'/'+algorithm_dataset_path)
     json_data = json.load(json_raw)
     correct_objects = get_correct_objects_for_url(json_data['url'])
     computed_objects = json_data['contactObjects']
-    print(
-        f'{len(computed_objects)} ?= {len(correct_objects)} ... {json_data["url"]}')
     LENGTH_DIFFERENCES.append(abs(len(correct_objects)-len(computed_objects)))
     GROUPINGS.append(len(correct_objects)-len(computed_objects))
 
@@ -49,11 +46,8 @@ LENGTH_DIFFERENCES.sort()
 GROUPINGS.sort()
 
 print(f'AVERAGE DIFFERENCE: {average(LENGTH_DIFFERENCES)}')
-print(
-    f'MEDIAN DIFFERENCE: {LENGTH_DIFFERENCES[int(len(LENGTH_DIFFERENCES)/2)]}')
-print(
-    f'MEDIAN GRPUPING INDEX: {GROUPINGS[int(len(GROUPINGS)/2)]} (Grouping strength of our algorithm)')
-print(
-    f'AVERAGE GROUPING INDEX: {average(GROUPINGS)} (Positive number means that algorithm\'s grouping is too strong)')
-
-# TODO compute best Jaccard avg index
+print(f'MEDIAN DIFF: {LENGTH_DIFFERENCES[int(len(LENGTH_DIFFERENCES)/2)]}')
+print('Grouping strength of our algorithm:')
+print(f'MEDIAN GRPUPING INDEX: {GROUPINGS[int(len(GROUPINGS)/2)]}')
+print(f'AVERAGE GROUPING INDEX: {average(GROUPINGS)}')
+print('(Positive number means that algorithm\'s grouping is too strong)')

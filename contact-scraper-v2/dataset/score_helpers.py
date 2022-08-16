@@ -2,6 +2,10 @@ from dataset_parser import list_union, list_intersection, levenstein_intersectio
 
 
 def jaccard_index(obj1, obj2, skip_list, use_lev=False):
+    '''
+    Jaccard index = intersections/union 
+    Computes intersectgions and union for each Social Handle property and returns final index
+    '''
     union_size = 0
     intersections = 0
     for key in obj1.keys():
