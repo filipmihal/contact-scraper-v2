@@ -122,6 +122,20 @@ export function isContactObjectEdgeCase(contactObject: SocialHandles){
 
 
 export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: SocialHandles[], duplicityMap: Map<string, number>){
+    let isNewObj = false
+    const trashlObject: SocialHandles = {
+        emails: [],
+        phones: [],
+        phonesUncertain: [],
+        linkedIns: [],
+        twitters: [],
+        instagrams: [],
+        facebooks: [],
+        youtubes: [],
+        tiktoks: [],
+        pinterests: [],
+        discords: []
+    }
     for (const key in parent) {
         if (Object.hasOwnProperty.call(parent, key)) {
             const socialKey = key as keyof SocialHandles;
@@ -135,9 +149,10 @@ export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: Soc
                         heirs[0][socialKey].push(contactUnit);
                     }
                     if(heirs.length > 1){
-                        console.error("LONELY CONTACT: " + contactUnit)
+                        duplicityMap.set(contactUnit, unitCount - 1)
+                        trashlObject[socialKey].push(contactUnit)
+                        isNewObj = true
                     }
-                    // heirs.forEach(heir => heir[key].push(contactUnit))
                 }
                 else if(unitCount > 1){
                     duplicityMap.set(contactUnit, unitCount - 1)
@@ -146,9 +161,53 @@ export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: Soc
                     throw new Error("Empty Map even though contact exists (Map not synced!!)")
                 }
             })
-            
         }
     }
-    
+
+    if(isNewObj)
+        return trashlObject
 }
 
+function combineObjects(obj1: SocialHandles, obj2: SocialHandles): SocialHandles {
+    const finalObject: SocialHandles = {
+        emails: [],
+        phones: [],
+        phonesUncertain: [],
+        linkedIns: [],
+        twitters: [],
+        instagrams: [],
+        facebooks: [],
+        youtubes: [],
+        tiktoks: [],
+        pinterests: [],
+        discords: []
+    }
+    Object.keys(obj1).forEach(elem => {
+        const socialKey = elem as keyof SocialHandles
+        finalObject[socialKey] = arrayUnion(obj1[socialKey], obj2[socialKey])
+    })
+    
+    return finalObject
+}
+
+export function groupSimilarObjects(contactObjects: SocialHandles[]): SocialHandles[] {
+    const mutatedObjects = JSON.parse(JSON.stringify(contactObjects)) as SocialHandles[]
+    const result = []
+
+    for (let idx = 0; idx < mutatedObjects.length; idx++) {
+        let isInserted = false
+        for (let idx2 = idx+1; idx2 < mutatedObjects.length; idx2++) {
+            
+            if(jaccardIndex(mutatedObjects[idx], mutatedObjects[idx2]) >= 0.2){
+                mutatedObjects[idx2] = combineObjects(mutatedObjects[idx], mutatedObjects[idx2])
+                isInserted = true
+                break
+            }
+        }
+        if (!isInserted) {
+            result.push(mutatedObjects[idx])
+        }  
+    }
+
+    return result
+}
