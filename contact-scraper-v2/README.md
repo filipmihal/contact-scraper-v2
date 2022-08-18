@@ -47,7 +47,9 @@ We used Google API to find appropriate websites for scraping. Then we selected a
 <b>Scripts:</b>
 
 -   [Jupyter notebook](https://deepnote.com/workspace/student-mihal-ccd3dee8-206e-437e-b277-c8d9ac4179f7/project/APIFY-NextGen-scraper-d95e616e-5351-43d3-a7f5-6b72e11ce7ce/%2Fnotebook.ipynb)
+    -   uses Google maps API to collectrelevant websites for scraping. Returns more than 2000 URLs. Thanks to Google API we have access to some interesting metadata (contact, name, etc.)
 -   [Sampling script](../Scraper_unique_urls/clean_and_sample_data.py)
+    -   selects 500 random URLs from a list of Google API urls
 
 ### Filtering websites that contain enough contacts
 
@@ -62,8 +64,11 @@ Final URL count was 500
 <b>Scripts</b>
 
 -   [Filtering scraper](../Scraper_unique_urls/main.js)
+    -   filters URLs that contain many contact nits, so annotators do not have to waste time
 -   [Raw list of filtered urls](../Scraper_unique_urls/urls_for_annotation.txt)
+    -   Final raw list of URLs for scraping
 -   [Final url list](../Scraper_unique_urls/final_sampled.csv)
+    -   final sampled list of URLs for annotators
 
 ### Annotating data
 
@@ -73,6 +78,7 @@ It was little bit problematic to join their Google sheets and validate their wor
 <b>Scripts</b>
 
 -   [merge dataset script](../dataset-merge/set_offset.py)
+    -   this script was used when combining multiple google sheets into a single dataset sheet.
 
 ### Cleaning the annotated dataset
 
@@ -92,6 +98,7 @@ After the cleanup and levenstain implementation, our final median index was ~0.5
 
 -   [Library that parses the dataset and computes Jaccard indeces](dataset/dataset_evaluator.py)
 -   [Beautifier](dataset/dataset_beautifier.py)
+    -   standradizes dataset, so it is easier to match annotated and scraped data
 
 ## 3. Grouping algorithm
 
@@ -259,6 +266,7 @@ In many cases if the number of contact objects mathes, then it is highly probabl
 <b>Scripts</b>
 
 -   [Python script that computes correctness of the algorithm](./dataset/score_calculator.py)
+-   computes median and average difference between the number of contact objects (algorithm vs annotated)
 
 ## 5. Summary
 
