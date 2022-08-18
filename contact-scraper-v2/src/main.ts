@@ -10,12 +10,12 @@ interface InputSchema {
 
 const { startUrls, debug } = await KeyValueStore.getInput<InputSchema>() ?? {};
 if (debug) {
-    log.setLevel(log.LEVELS.DEBUG);
+	log.setLevel(log.LEVELS.DEBUG);
 }
 
 const crawler = new PuppeteerCrawler({
-    maxConcurrency: 50,
-    requestHandler: router,
+	maxConcurrency: 50,
+	requestHandler: router,
 });
 
 await crawler.run(startUrls);
