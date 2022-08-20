@@ -1,6 +1,6 @@
 **/node_modules
 **/apify_storage
 **/request_queues
-**/storage/datasets
+**/storage
 **/default/SDK*
 **/dist
