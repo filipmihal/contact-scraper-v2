@@ -63,7 +63,7 @@ The final URL count was 500
 
 <b>Scripts</b>
 
--   [Filtering scraper](../Scraper_unique_urls/main.js)
+-   [Filtering crawler](../Scraper_unique_urls/main.js)
     -   filters URLs that contain many contact nits, so annotators do not have to waste time
 -   [Raw list of filtered URLs](../Scraper_unique_urls/urls_for_annotation.txt)
     -   Final raw list of URLs for scraping
@@ -77,6 +77,8 @@ It was a little bit problematic to join their Google sheets and validate their w
 
 <b>Scripts</b>
 
+-   [Google sheet, given to our annotators](https://docs.google.com/spreadsheets/d/1Q_Y7v1eZT1T-2oFJ4ZpoAwLn2PsesIBxvHuoSBYi72M/edit#gid=123597553)
+    -   Contains a step-by-step tutorial on how to scrape and create contact objects from the list of URLs.
 -   [merge dataset script](../dataset-merge/set_offset.py)
     -   this script was used when combining multiple google sheets into a single dataset sheet
 
@@ -179,6 +181,8 @@ After running the scoring function on our greedy algorithm, we noticed several h
 
 <!-- TODO: explain this a little bit more -->
 
+-   [Contact scraper V2](./src/main.ts)
+
 ## 4. Evaluating the algorithm
 
 We need a way to evaluate the correctness of our algorithm.
@@ -278,3 +282,23 @@ The first part of the project was to collect a relatively good dataset and creat
 
 -   Use the tree structure of an HTML page as a metric. This would provide necessary data for training an ML model (requires better API)
 -   Compute actual (visual) distances between contact units and use them as input data for training an ML algorithm. Puppeteer renders a given website so its API allows us to get Euclidian distance between selected HTML objects.
+
+## Software documentation
+
+### Creating a new dataset
+
+1.  Run this [Jupyter notebook](https://deepnote.com/workspace/student-mihal-ccd3dee8-206e-437e-b277-c8d9ac4179f7/project/APIFY-NextGen-scraper-d95e616e-5351-43d3-a7f5-6b72e11ce7ce/%2Fnotebook.ipynb). It returns a list of relevant websites. (You might need to use your own Google API token)
+2.  Take a sample from the list of relevant websites using [the sampling script](../Scraper_unique_urls/clean_and_sample_data.py)
+3.  Crawl sampled websites and save only those URLs which contain enough contacts. This script crawls the websites and filters only relevant URLs. You can easily set the baseline and weights for individual contact types, so the crawler saves only those URLs that pass your baseline. [Filtering crawler](../Scraper_unique_urls/main.js)
+4.  You can sample your data again if needed.
+5.  Put the final URL list into [ the Google sheet](https://docs.google.com/spreadsheets/d/1Q_Y7v1eZT1T-2oFJ4ZpoAwLn2PsesIBxvHuoSBYi72M/edit#gid=123597553) and send it to annotators
+6.  Merge multiple Google sheets of annotated data into a single sheet using [ a merge dataset script](../dataset-merge/set_offset.py)
+7.  Evaluate the correctness of annotated data using [a library that parses the dataset and computes Jaccard indexes](dataset/dataset_evaluator.py)
+
+### Running the contact scraper v2
+
+-   Our scraper is built on top of Crawlee & Puppeteer engine. It is built using Typescript and the evaluator is built in Python.
+
+1. Run the [Contact scraper V2](./src/main.ts)
+2. Compute the median and average difference between the number of contact objects annotated on a given URL and the number of objects our algorithm found on the URL.
+3. Standardize data using [the standardization library](dataset/dataset_beautifier.py) and compare the differences among actual contact units inside the contact objects.
