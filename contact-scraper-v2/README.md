@@ -2,13 +2,13 @@
 
 ## Project description
 
-Building a contact scraper is pretty straight-forward. Using regex, one can get any kind of contact he desires. Contact Scraper V2 mtaches those contacts to an actual entity. It builds contact objects which represent a company or a person on a given website.
+Building a contact scraper is pretty straightforward. Using regex, one can get any kind of contact he desires. Contact Scraper V2 matches those contacts to an actual entity. It builds contact objects which represent a company or a person on a given website.
 
 ## Progress
 
-## 1. Clarify new structure of contact objects
+## 1. Clarify a new structure of contact objects
 
-We decided to add additional data units to our contact object like address, contact type and contact name.
+We decided to add additional data units to our contact objects like address, contact type and contact name.
 We agreed on a nested structure of contact objects.
 
 Structure:
@@ -32,11 +32,11 @@ Structure:
 }
 ```
 
-design doc is available [HERE](https://catnip-canopy-b4a.notion.site/Dataset-structure-bbcdbccb6a534ce8941fb099c452543c)
+The design doc is available [HERE](https://catnip-canopy-b4a.notion.site/Dataset-structure-bbcdbccb6a534ce8941fb099c452543c)
 
 ## 2. Building a dataset
 
-This is an essential part of the process. We need labeled dataset to measure success of our algorithms and potentially train an ML model.
+This is an essential part of the process. We need a labeled dataset to measure the success of our algorithms and potentially train an ML model.
 
 > This turned out to be the most challenging part of the project.
 
@@ -47,71 +47,73 @@ We used Google API to find appropriate websites for scraping. Then we selected a
 <b>Scripts:</b>
 
 -   [Jupyter notebook](https://deepnote.com/workspace/student-mihal-ccd3dee8-206e-437e-b277-c8d9ac4179f7/project/APIFY-NextGen-scraper-d95e616e-5351-43d3-a7f5-6b72e11ce7ce/%2Fnotebook.ipynb)
-    -   uses Google maps API to collectrelevant websites for scraping. Returns more than 2000 URLs. Thanks to Google API we have access to some interesting metadata (contact, name, etc.)
--   [Sampling script](../Scraper_unique_urls/clean_and_sample_data.py)
-    -   selects 500 random URLs from a list of Google API urls
+    -   uses Google maps API to collect relevant websites for scraping. Returns more than 2000 URLs. Thanks to Google API we have access to some interesting metadata (contact, name, etc.)
+-   [The sampling script](../Scraper_unique_urls/clean_and_sample_data.py)
+    -   selects 500 random URLs from a list of Google API URLs
 
 ### Filtering websites that contain enough contacts
 
-We used our previous contact scraper to filter websites that would be used for labeling. We set up our custom scoring to decide what website should pass the baseline. We also set a upper bound for the number of contacts on a page, so annotators don't have to annotate websites that would take them too much time and won't be very helpful.
+We used our previous contact scraper to filter websites that would be used for labeling. We set up our custom scoring to decide what website should pass the baseline. We also set an upper bound for the number of contacts on a page, so annotators don't have to annotate websites that would take them too much time and won't be very helpful.
 
 > Learning: The baseline that was used, turned out to be too weak and most of the labeled websites contained only a single contact object.
 
 > Learning: In order to speed up the scraping process, I decreased the limit of enqued links. That was a huge mistake because most of the websites have a large amount of links and our scraper could not reach contact pages.
 
-Final URL count was 500
+The final URL count was 500
 
 <b>Scripts</b>
 
 -   [Filtering scraper](../Scraper_unique_urls/main.js)
     -   filters URLs that contain many contact nits, so annotators do not have to waste time
--   [Raw list of filtered urls](../Scraper_unique_urls/urls_for_annotation.txt)
+-   [Raw list of filtered URLs](../Scraper_unique_urls/urls_for_annotation.txt)
     -   Final raw list of URLs for scraping
--   [Final url list](../Scraper_unique_urls/final_sampled.csv)
+-   [Final URL list](../Scraper_unique_urls/final_sampled.csv)
     -   final sampled list of URLs for annotators
 
 ### Annotating data
 
-Our annotators filled out a Google sheet (It has a pretty simple and well-known UI). They were given instructions and prefilled example sheet.
-It was little bit problematic to join their Google sheets and validate their work. We used custom scripts to fix this issue.
+Our annotators filled out a Google sheet (It has a pretty simple and well-known UI). They were given instructions and prefilled an example sheet.
+It was a little bit problematic to join their Google sheets and validate their work. We used custom scripts to fix this issue.
 
 <b>Scripts</b>
 
 -   [merge dataset script](../dataset-merge/set_offset.py)
-    -   this script was used when combining multiple google sheets into a single dataset sheet.
+    -   this script was used when combining multiple google sheets into a single dataset sheet
 
 ### Cleaning the annotated dataset
 
-In order to be able to use the dataset, annotated contact units (emails, phone numbers, etc.) must match those that are automatically scraped by a regex script. Hence, we build a dataset validator that uses Jaccard index to determines goodness of the dataset.
+In order to be able to use the dataset, annotated contact units (emails, phone numbers, etc.) must match those that are automatically scraped by a regex script. Hence, we build a dataset validator that uses the Jaccard index to determine the goodness of the dataset.
 
 > Results were pretty dissapointing but revealed many easily fixable bugs.
 
-Median Jaccard index of data not altered in any way was ~ 0.20
+The median Jaccard index of unaltered data was ~ 0.20
 
-We beautified the annotators' dataset by standardazing contact units and switching misplaced values.
+We beautified the annotators' dataset by standardizing contact units and switching misplaced values.
 
-Unfortunately, this did not raise the median that much. There were multiple factors that influenced the jaccard index. Hence, we decided to use Levenstein distance <=2.
+Unfortunately, this did not raise the median that much. There were multiple factors that influenced the Jaccard index. Hence, we decided to use Levenstein distance <=2. More about Levenstein distance can be found [HERE](https://en.wikipedia.org/wiki/Levenshtein_distance)
 
-After the cleanup and levenstain implementation, our final median index was ~0.5
+After the cleanup and Levenstain implementation, our final median index was ~0.5
 
 <b>Scripts</b>
 
--   [Library that parses the dataset and computes Jaccard indeces](dataset/dataset_evaluator.py)
+-   [Library that parses the dataset and computes Jaccard indexes](dataset/dataset_evaluator.py)
 -   [Beautifier](dataset/dataset_beautifier.py)
-    -   standradizes dataset, so it is easier to match annotated and scraped data
+    -   Standardizes dataset, so it is easier to match annotated and scraped data
+-   [The final dataset](https://docs.google.com/spreadsheets/d/1C_PXrH0N62wx4YcY28FIWbgEa6KOBUD_y65WjfUeh1U/edit#gid=505003787)
+    -   Each row contains correct links to its subobjects. Fixed misplaced emails and phone numbers. Removed spaces and wrong email formats.
 
 ## 3. Grouping algorithm
 
 Firstly, we decided to use pure HTML to find contact objects and not to use any ML algorithms.
 
-### Greedy algorithm that uses DIVS as contact object separators
+### A greedy algorithm that uses DIVS as contact object separators
 
 <b>Basic idea:</b> We use DIV elements as object identifiers and separators.
 
 <b>Definitions:</b>
 
 -   Empty DIV is a DIV whose content is free of any contact info. (Our regex could not find anything)
--   Leaf DIV is a DIV that contains atleast one contact and that does not contain any other DIVs or all of its DIV children are empty DIVs.
+-   Leaf DIV is a DIV that contains at least one contact and that does not contain any other DIVs or all of its DIV children are empty DIVs.
 
 All contacts that are inside a single leaf DIV belong to a single contact object. If there is a contact whose position is not in a leaf DIV, then we add it to a "trash" contact object
 
@@ -153,27 +155,27 @@ All contacts that are inside a single leaf DIV belong to a single contact object
 ]
 ```
 
-Although, the algorithm sounds simple, the Puppeteer API does not allow us to build a simple algorithm. So we had to use small work arounds to simulate the steps mentioned above. Here is a proper description of what the algorithm does:
+Although the algorithm sounds simple, the Puppeteer API does not allow us to build a simple algorithm. So we had to use a small workaround to simulate the steps mentioned above. Here is a proper description of what the algorithm does:
 
 1. Find all DIVS on a given website
 2. Find all contacts in a given DIV. Do that for each DIV
 3. Sort DIVS (descending) by the number of contact units they contain
-4. Iterate throught the list of DIVS
+4. Iterate through the list of DIVS
 5. check if there is a subset of contacts in the list of DIVS for a given DIV A (currently iterated)
-6. If yes, then we can delete this DIV. If it contains any contact units that do not occur anywhere else, we will create a trash contact object for them.
-7. if no (there is no subset in the list) then this DIV represents one of the final contact objects.
-8. Resulting list is represented by leaf DIVS and one trash DIV.
+6. If the list does contain a subobject of the DIV currently iterated, then we can delete this DIV. It is not a leaf node. If it contains any contact units that do not occur anywhere else, we will create a trash contact object for them.
+7. if the list does not contain a subobject, then this DIV represents one of the final contact objects. We push it to the final array. It is a leaf node.
+8. The resulting list is represented by leaf DIVS and one trash DIV.
 
 Perfect real-world example: https://missionlocal.org/about-3/ (algorithm achieved )
 
 ### Greedy algorithm upgrade
 
-After running scoring function on our greedy algorithm, we noticed several heuristics that might help in improving the resulting contact objects:
+After running the scoring function on our greedy algorithm, we noticed several heuristics that might help in improving the resulting contact objects:
 
 -   Add new separator tags such as TR, TD, UL, ADDRESS
--   Add weak TAGS (If they contain only single contact unit we will neglect them) P, LI
+-   Add weak TAGS (If they contain only a single contact unit we will neglect them) P, LI
 -   Do not neglect phonesUncertain
--   Group objects into one if they don't share same properties
+-   Group objects into one if they don't share the same properties
 
 <!-- TODO: explain this a little bit more -->
 
@@ -182,14 +184,14 @@ After running scoring function on our greedy algorithm, we noticed several heuri
 We need a way to evaluate the correctness of our algorithm.
 We deal with multiple objects that contain multiple properties.
 There are several discrepancies between annotated dataset and the actual scraped data, so we need to take that into an account.
-Most important parameter is the differnce between the number of contact objects of scraped and annotated website. With jaccard similarity just around 0.5 it seems futile to compare the actual contents of contact objects.
+The most important parameter is the difference between the number of contact objects of scraped and annotated websites. With Jaccard similarity just around 0.5, it seems futile to compare the actual contents of contact objects.
 
 Once we achieve relatively good "object number" similarity, then we can care about the actual content of those objects.
 
 So our first metric was the difference between the number of contact objects.
-We computed median and average.
+We computed the median and average.
 
-In many cases if the number of contact objects mathes, then it is highly probable that the contents of those objects will match as well.
+In many cases, if the number of contact objects matches, then it is highly probable that the contents of those objects will match as well.
 
 <b>Results for 20 URLs dataset (Many contact objects per website [6]):</b>
 
@@ -265,14 +267,14 @@ In many cases if the number of contact objects mathes, then it is highly probabl
 
 <b>Scripts</b>
 
--   [Python script that computes correctness of the algorithm](./dataset/score_calculator.py)
--   computes median and average difference between the number of contact objects (algorithm vs annotated)
+-   [Python script that computes the correctness of a given algorithm](./dataset/score_calculator.py)
+-   Computes the median and average difference between the number of contact objects (algorithm vs annotated)
 
 ## 5. Summary
 
-First part of the project was to collect a relative good dataset and create a simple algorithm that does not require AI. We achieved moderate results.
+The first part of the project was to collect a relatively good dataset and create a simple algorithm that does not require AI. We achieved moderate results.
 
 #### Ideas
 
--   Game changer would be to take advantage of the rendered page and compute objects based on the positions of contact units on a given page
--   Use the tree structure of an HTML page as a metric. (requires better API)
+-   Use the tree structure of an HTML page as a metric. This would provide necessary data for training an ML model (requires better API)
+-   Compute actual (visual) distances between contact units and use them as input data for training an ML algorithm. Puppeteer renders a given website so its API allows us to get Euclidian distance between selected HTML objects.
