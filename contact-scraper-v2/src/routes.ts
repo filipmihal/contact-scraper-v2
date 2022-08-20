@@ -1,7 +1,6 @@
 import { createPuppeteerRouter, Dataset } from 'crawlee'
 import * as Helper from './helpers.js'
 import { DURATIONS } from './main.js'
-import { Actor } from 'apify';
 import { parseStandardHandlesFromHtml } from './standardizedSocialHandles.js'
 
 export const router = createPuppeteerRouter()
@@ -87,7 +86,6 @@ router.addDefaultHandler(async ({ page }) => {
 	}
 
 	Dataset.pushData(result)
-	await Actor.pushData(result);
 	const duration = performance.now() - start
 	DURATIONS.push(duration)
 });
