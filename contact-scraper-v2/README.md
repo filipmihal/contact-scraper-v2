@@ -291,9 +291,9 @@ The first part of the project was to collect a relatively good dataset and creat
 2.  Take a sample from the list of relevant websites using [the sampling script](../Scraper_unique_urls/clean_and_sample_data.py)
 3.  Crawl sampled websites and save only those URLs which contain enough contacts. This script crawls the websites and filters only relevant URLs. You can easily set the baseline and weights for individual contact types, so the crawler saves only those URLs that pass your baseline. [Filtering crawler](../Scraper_unique_urls/main.js)
 4.  You can sample your data again if needed.
-5.  Put the final URL list into [ the Google sheet](https://docs.google.com/spreadsheets/d/1Q_Y7v1eZT1T-2oFJ4ZpoAwLn2PsesIBxvHuoSBYi72M/edit#gid=123597553) and send it to annotators
-6.  Merge multiple Google sheets of annotated data into a single sheet using [ a merge dataset script](../dataset-merge/set_offset.py)
-7.  Evaluate the correctness of annotated data using [a library that parses the dataset and computes Jaccard indexes](dataset/dataset_evaluator.py)
+5.  Put the final URL list into [ the Google sheet](https://docs.google.com/spreadsheets/d/1Q_Y7v1eZT1T-2oFJ4ZpoAwLn2PsesIBxvHuoSBYi72M/edit#gid=123597553) and send it to annotators.
+6.  Merge multiple Google sheets of annotated data into a single sheet using [ a merge dataset script](../dataset-merge/set_offset.py).
+7.  Evaluate the correctness of annotated data using [a library that parses the dataset and computes Jaccard indexes](dataset/dataset_evaluator.py).
 
 ### Running the contact scraper v2
 
