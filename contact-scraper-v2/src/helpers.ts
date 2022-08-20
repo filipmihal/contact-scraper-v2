@@ -122,7 +122,6 @@ export function isContactObjectEdgeCase(contactObject: SocialHandles){
 
 
 export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: SocialHandles[], duplicityMap: Map<string, number>){
-	let isNewObj = false
 	const trashlObject: SocialHandles = {
 		emails: [],
 		phones: [],
@@ -151,7 +150,6 @@ export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: Soc
 					if(heirs.length > 1){
 						duplicityMap.set(contactUnit, unitCount - 1)
 						trashlObject[socialKey].push(contactUnit)
-						isNewObj = true
 					}
 				}
 				else if(unitCount > 1){
@@ -163,9 +161,6 @@ export function uniqueContactSubsetInheritance(parent: SocialHandles, heirs: Soc
 			})
 		}
 	}
-
-	if(isNewObj)
-		return trashlObject
 }
 
 function combineObjects(obj1: SocialHandles, obj2: SocialHandles): SocialHandles {

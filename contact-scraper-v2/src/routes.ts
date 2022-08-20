@@ -50,7 +50,7 @@ router.addDefaultHandler(async ({ page }) => {
 		uniqueContacts.shift()
 		const subsets = uniqueContacts.filter(elem => Helper.isSubset(contact, elem) && contact !== elem)
 		if(subsets.length > 0){
-			const potentialObj = Helper.uniqueContactSubsetInheritance(contact, subsets, duplicityMap)
+			Helper.uniqueContactSubsetInheritance(contact, subsets, duplicityMap)
 			// if(potentialObj){
 			//     finalContacts.push(potentialObj)
 			// }
