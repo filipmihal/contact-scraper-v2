@@ -9,6 +9,8 @@ interface InputSchema {
 
 
 const { startUrls, debug } = await KeyValueStore.getInput<InputSchema>() ?? {};
+console.log(await KeyValueStore.getInput<InputSchema>());
+
 if (debug) {
 	log.setLevel(log.LEVELS.DEBUG);
 }
